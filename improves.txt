@@ -1,0 +1,23 @@
+Leyend:
+
+ -  Listed (not finished)
+ ✓  Working on that
+✓✓ Finished
+
+✓✓ Check margins of elements to fix the move up on press sign in
+✓✓ Create an function on icon password, when isHiddenIconQuestion is true, go to the forgot password
+✓✓ The ButtonBack must have position absolute, to always be in the screen and not only up there
+✓✓ Take an init the app with the theme mode on user's phone
+ 
+ - DISENGAGE THE COMPONENTS! Login must be clean and simple, with styles only at fist, and custom components with childrens
+ - Unable sugestions on password's TextInput 
+ - Animation fade when the mode changed (dark-light)
+ - Save the last mode used on DB user's table 
+ - Unselect the TextInput when click the background
+ - Hide the scroll indicator on login
+ - Once the styles of an components are ready, add it on the compStyles, and not inline in the component
+ - Everytime that pages change, reset the states pages at default
+
+
+
+ 

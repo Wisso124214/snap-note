@@ -1,0 +1,20 @@
+ ✓ Logo
+ - ListCategories scroll
+ - ElementCategory
+ - ListNotes scroll
+ - ElementNote (^)
+ - Plus
+ ✓ SvgIcon
+ - Error validation
+ ✓ Message
+ ✓ SimpleInput (Input)
+ ✓ ContrButton1 (ButtonSign)
+ - RegisterInput (use Input)
+ - EditCatgories
+ - EditCategory
+ - EditNote
+ - UserAccount
+ - OtherAccounts
+ - ContrButton2
+ ✓ ButtonIcon (optimice ThemeModeButton)
+

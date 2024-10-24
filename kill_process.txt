@@ -1,0 +1,2 @@
+netstat -ano | findstr NNNN
+Stop-Process -ID NNNN -Force
