@@ -5,7 +5,7 @@
  - ElementNote (^)
  - Plus
  ✓ SvgIcon
- - Error validation
+ - Message error validation and icon
  ✓ Message
  ✓ SimpleInput (Input)
  ✓ ContrButton1 (ButtonSign)

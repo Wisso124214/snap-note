@@ -11,10 +11,13 @@ import {
 } from 'react-native';
 
 import LoadingScreen from './components/loadingScreen/LoadingScreen';
-import ThemeModeButton from './components/themeModeButton/ThemeModeButton';
 import Login from './components/login/Login';
 import ForgotPassword from './components/forgotPassword/ForgotPassword';
-import Component1 from './components/test/Test';
+import { set } from 'lodash';
+import Register from './components/register/Register';
+import EditNote from './components/editNote/EditNote';
+import IconButton from './components/iconButton/IconButton';
+import ThemeModeButton from './components/iconButton/ThemeModeButton';
 
 export default function App() {
   
@@ -23,9 +26,10 @@ export default function App() {
     on: {
       timeToLoad: 1,
       debugMenuEnabled: true,
-      page: 3,
-      pagefp: 1,
+      page: 4,
+      pagefp: 0,
       appState: 'running',
+      showDebugMenu: true,
     },
     off: {
       timeToLoad: 3000,
@@ -33,6 +37,7 @@ export default function App() {
       page: 0,
       pagefp: 0,
       appState: 'initializing',
+      showDebugMenu: false,
     }
     
   }
@@ -41,9 +46,8 @@ export default function App() {
   const [page, setPage] = useState(devMode[devMode.power].page);
   const opacityref = useRef(new Animated.Value(0)).current;
   const bgColor = useRef(new Animated.Value(0)).current;
-  const [showDebugMenu, setShowDebugMenu] = useState(false);
+  const [showDebugMenu, setShowDebugMenu] = useState(devMode[devMode.power].showDebugMenu);
   const [appState, setAppState] = useState(devMode[devMode.power].appState);
-  const [showBack, setShowBack] = useState(false);
   const [isInputFocus, setIsInputFocus] = useState(false);
 
   const [isHiddenMssg, setIsHiddenMssg] = useState(true);
@@ -96,8 +100,6 @@ export default function App() {
     consts: consts,
     isInputFocus: isInputFocus,
     setIsInputFocus: setIsInputFocus,
-    showBack: showBack,
-    setShowBack: setShowBack,
   }
   
   const dataMssg = {
@@ -114,7 +116,7 @@ export default function App() {
     mode: mode,
     consts: consts,
     setIsInputFocus: setIsInputFocus,
-    showBack: showBack,
+    isInputFocus: isInputFocus,
     onPress: () => {
       setIsInputFocus(false)
     },
@@ -126,15 +128,23 @@ export default function App() {
     consts: consts,
     styles: styles,
     dataInput: dataInput,
+    isPinInput: false,
+  }
+
+  const dataIconButton = {
+    theme: theme,
+    mode: mode,
+    setMode: setMode,
+    consts: consts,
+    styles: styles,
   }
 
   const dataPages = {
     theme: theme,
     mode: mode,
     consts: consts,
+    isInputFocus: isInputFocus,
     setIsInputFocus: setIsInputFocus,
-    showBack: showBack,
-    setShowBack: setShowBack,
     devMode: devMode,
     styles: styles,
     showDebugMenu: showDebugMenu,
@@ -146,13 +156,16 @@ export default function App() {
     dataMssg: dataMssg,
     dataButtonBack: dataButtonBack,
     dataPinInput: dataPinInput,
+    dataIconButton: dataIconButton,
   }
   
+  //DO NOT CHANGE THE ORDER
   const debug = [
     <LoadingScreen dataPages={dataPages} />,
     <Login dataPages={dataPages} />,
     <ForgotPassword dataPages={dataPages} />,
-    <Component1 />,
+    <Register dataPages={dataPages} />,
+    <EditNote dataPages={dataPages} />,
   ]
   
   NavigationBar.setBackgroundColorAsync(theme[mode].backgroundColor);
@@ -190,6 +203,10 @@ export default function App() {
 
   useEffect(() => {
     switch(page){
+      case 1:
+        setIsHiddenMssg(true);
+        setIsInputFocus(false);
+        break;
       case 2:
         setIsHiddenMssg(true);
         break;
@@ -212,9 +229,9 @@ export default function App() {
               <Text> {"<"} </Text>
             </TouchableOpacity>
             
-            <ThemeModeButton mode={mode} setMode={setMode} styles={styles} theme={theme} />
+            <ThemeModeButton dataIconButton={dataIconButton} />
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setPage(page < debug.length-1 ? page+1 : 0)}
               style={{ ...styles.simpleButtons, justifyContent: 'center', alignItems: 'center', height: 30, paddingVertical: 2, paddingHorizontal: 6 }}
             >

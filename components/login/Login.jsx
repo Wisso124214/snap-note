@@ -8,8 +8,13 @@ import Message from "../message/Message";
 import SvgIconProvider from "../svg/svgIconProvider";
 
 const Login = ({ dataPages }) => {
-
-  const { theme, styles, mode, consts, dataInput, showDebugMenu, setShowDebugMenu, setPage, devMode, dataMssg, dataButtonBack } = dataPages;
+  
+  const { theme, styles, mode, consts, dataInput, showDebugMenu, setShowDebugMenu, setPage, devMode, dataMssg, dataButtonBack, setIsInputFocus } = dataPages;
+  const { isHiddenMssg, setIsHiddenMssg, textMssg, setTestMssg, colorMssg, setColorMssg } = dataMssg;
+  
+  const [isHiddenIconQuestion, setIsHiddenIconQuestion] = useState(true);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [textInput, setTextInput] = useState(['', '']);
 
   const compStyles = {
     header: {
@@ -40,23 +45,23 @@ const Login = ({ dataPages }) => {
       left: 10,
       color: theme[mode].icons,
       px: 18*consts.px,
-  
     },
   }
-  
-  const [isHiddenIconQuestion, setIsHiddenIconQuestion] = useState(true);
-
-  const { isHiddenMssg, setIsHiddenMssg, textMssg, setTestMssg, colorMssg, setColorMssg } = dataMssg;
 
   return (
-    
       <View style={{
         position: 'absolute',
         top: 0,
         left: 0,
-
       }} >
-        <ButtonBack dataButtonBack={dataButtonBack} />
+        <ButtonBack 
+        dataButtonBack={{ 
+          ...dataButtonBack, 
+          onPress: ()=>{
+            setIsInputFocus(false)
+            setIsKeyboardVisible(false)
+          }
+        }} />
 
         <View 
           style={{ 
@@ -95,15 +100,62 @@ const Login = ({ dataPages }) => {
                 style={compStyles.input}
                 inputMode="text"
                 dCodeIcon="M7.5.875a3.625 3.625 0 0 0-1.006 7.109c-1.194.145-2.218.567-2.99 1.328-.982.967-1.479 2.408-1.479 4.288a.475.475 0 1 0 .95 0c0-1.72.453-2.88 1.196-3.612.744-.733 1.856-1.113 3.329-1.113s2.585.38 3.33 1.113c.742.733 1.195 1.892 1.195 3.612a.475.475 0 1 0 .95 0c0-1.88-.497-3.32-1.48-4.288-.77-.76-1.795-1.183-2.989-1.328A3.627 3.627 0 0 0 7.5.875ZM4.825 4.5a2.675 2.675 0 1 1 5.35 0 2.675 2.675 0 0 1-5.35 0Z"
-                dataInput={dataInput} />
+                dataInput={{
+                  ...dataInput,
+                  stateValue: [textInput, setTextInput],
+                  isKeyboardVisible: isKeyboardVisible,
+                  index: 0,
+                  isLoginInput: true,
+                  textprops: {
+                    maxLength: 20,
+                    onFocus: () => {
+                      setIsKeyboardVisible(true);
+                      setIsInputFocus(true);
+                    },
+                    onBlur: () => {
+                      setIsKeyboardVisible(false);
+                    },
+                    onChangeText: (text) => {
+                      setTextInput((prev)=>[text, textInput[1]]);
+                    }
+                  }
+                }} />
 
               <Input
                 placeholder="Password"
-                secretWriting={true}
                 style={compStyles.input}
+                secretWriting={true}
                 inputMode="text"
                 dCodeIcon="M5 4.636c0-.876.242-1.53.643-1.962.396-.427 1.003-.696 1.858-.696.856 0 1.462.269 1.857.694.4.431.642 1.085.642 1.961V6H5V4.636ZM4 6V4.636c0-1.055.293-1.978.91-2.643.623-.67 1.517-1.015 2.591-1.015 1.075 0 1.969.344 2.59 1.014.617.664.909 1.587.909 2.641V6h1a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1ZM3 7h9v6H3V7Z"
-                dataInput={dataInput} />
+                dataInput={{
+                  ...dataInput,
+                  stateValue: [textInput, setTextInput],
+                  index: 1,
+                  isLoginInput: true,
+                  isKeyboardVisible: isKeyboardVisible,
+                  textprops: {
+                    maxLength: 25,
+                    onFocus: () => {
+                      setIsKeyboardVisible(true);
+                      setIsInputFocus(true);
+                    },
+                    onBlur: () => {
+                      setIsKeyboardVisible(false);
+                    },
+                    onChangeText: (text) => {
+                      let newValue = text
+                      if (text !== undefined) {
+                        newValue = text.split('').map((el, i) => {
+                          if (i < text.length)
+                            return '●'
+                          else
+                            return el
+                        }).join('')
+                      }
+                      setTextInput((prev)=>[textInput[0], newValue]);
+                    }
+                  }
+                }} />
             </View>
 
             <ContrastingButton 
@@ -113,17 +165,23 @@ const Login = ({ dataPages }) => {
               consts={consts} 
               styles={{ marginTop: 50 * consts.px, marginBottom: 260 * consts.px }} 
               onPress={() => {
-                const result = 'error'; // Here should be the login logic
-                
+                // Here should be the login logic
+                //const result = 'error'; 
 
-                if (result === 'error') {
-                  setIsHiddenMssg(false);
+                if (textInput[0] === 'Error') {
                   setTestMssg('User or password are wrong');
                   setColorMssg(theme[mode].errorColor);
                   setIsHiddenIconQuestion(false);
-
-                } else if (result === 'success') {
                   setIsHiddenMssg(false);
+                  
+                } else if (textInput[0] === 'Success') {
+                  setTestMssg('Login successful');
+                  setColorMssg(theme[mode].successColor);
+                  setIsHiddenIconQuestion(true);
+                  setIsHiddenMssg(false);
+                  setTimeout(() => {
+                    setPage(4);
+                  }, 1000);
                 }
               }}
               />
@@ -186,7 +244,9 @@ const Login = ({ dataPages }) => {
                   ...compStyles.footText,
                 }}>
                 Don't have an account? </Text>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setPage(3)}
+              >
                 <Text
                   style={{
                     color: theme[mode].noColor,

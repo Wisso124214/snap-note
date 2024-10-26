@@ -1,52 +1,39 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Path } from "react-native-svg"
 import ContrastingButton from '../contrastingButton/ContrastingButton';
 import ButtonBack from '../buttonBack/ButtonBack';
 import PinInput from '../pinInput/PinInput';
-import CreateFileText from '../../utils/CreateFileText';
-//import RNFS from 'react-native-fs';
 
 
 const ForgotPass2 = ({ dataForgotPassword }) => {
-  const { dataPages, compStyles, setPagefp } = dataForgotPassword;
-  const { styles, mode, theme, consts, dataInput, showDebugMenu, setShowDebugMenu, dataButtonBack, showBack, setIsInputFocus, setPage, dataPinInput } = dataPages;
-  const textInputRefs = useRef(Array.from({ length: 5 }, () => React.createRef()));
-
+  const { dataPages, compStyles, setPagefp, pagefp } = dataForgotPassword;
+  const { styles, mode, theme, consts, showDebugMenu, setShowDebugMenu, dataButtonBack, isInputFocus, setIsInputFocus, dataPinInput } = dataPages;
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [pinSelected, setPinSelected] = React.useState(0);
-  
-  const getCircularReplacer = () => {
-    const seen = new WeakSet();
-    return (key, value) => {
-      if (typeof value === "object" && value !== null) {
-        if (seen.has(value)) {
-          return "[Circular]";
-        }
-        seen.add(value);
-      }
-      return value;
-    };
-  };
+  const ncomponents = 5;
 
-  useEffect(() => {
-    //textInputRef.current[0].current
-    //JSON.stringify(textInputRefs.current[0], getCircularReplacer(), 2)
-    //alert(JSON.stringify(textInputRefs.current[0].current['_internalFiberInstanceHandleDEV'], getCircularReplacer(), '+'))
-    //CreateFileText('textInputRefs.txt', 'Hello World')
-  }, [textInputRefs])
+  useEffect(()=>{
+    isInputFocus && pinSelected === 0 ? setIsKeyboardVisible(true) : null
+  }, [isInputFocus])
+
+  useEffect(()=>{
+    !isKeyboardVisible ? setIsInputFocus(false) : null
+  }, [isKeyboardVisible])
 
   return(
-    <View style={ compStyles.container } >
+    <View style={ compStyles.container }>
       <Text style={ compStyles.header } >Forgot Password</Text>
       <ButtonBack 
         dataButtonBack={{ 
           ...dataButtonBack, 
-          showBack: true,
+          isInputFocus: true,
           onPress: ()=>{
-            if(showBack){
+            if(isInputFocus){
               setIsInputFocus(false)
+              setIsKeyboardVisible(false)
             }else{
-              setPagefp(0)
+              setPagefp(pagefp-1)
             }
           }
         }} 
@@ -86,28 +73,30 @@ const ForgotPass2 = ({ dataForgotPassword }) => {
         }}
       >
         {
-          Array.from({ length: 5 }).map((_, index) => (
-            <PinInput 
-              ref={textInputRefs.current[index]}
+          Array.from({ length: ncomponents }).map((_, index) => (
+            <PinInput
               key={index}
-              index={index}
-              nextRef={textInputRefs.current[index + 1] || { current: { focus: () => {} } }}
               dataPinInput={{
                 ...dataPinInput,
+                isPinInput: true,
+                ncomponents: ncomponents,
+                isKeyboardVisible: isKeyboardVisible,
+                setIsKeyboardVisible: setIsKeyboardVisible,
                 pinSelected: pinSelected,
                 setPinSelected: setPinSelected,
+                index: index,
               }} 
             />
           ))
         }
-        
       </View>
 
       <ContrastingButton 
         text="Send" 
         theme={theme} 
         mode={mode} 
-        consts={consts} styles={styles} />
+        consts={consts} styles={styles}
+        onPress={()=>setPagefp(pagefp+1)} />
     </View>
   )
 }

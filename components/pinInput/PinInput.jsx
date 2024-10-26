@@ -1,28 +1,18 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import Input from '../input/Input';
 
-const PinInput = forwardRef(({ index, dataPinInput, nextRef }, ref) => {
+const PinInput = ({ dataPinInput }) => {
 
   const [value, setValue] = React.useState('');
-  const { mode, theme, consts, styles, dataInput, pinSelected, setPinSelected } = dataPinInput;
-  const { setShowBack, setIsInputFocus } = dataInput;
-  
-  /*useEffect(() => {  
-    if (pinSelected !== index && textInputRef.current) {
-      //textInputRef.current[index].blur();
+  const { mode, theme, consts, styles, dataInput, pinSelected, setPinSelected, index, isKeyboardVisible, setIsKeyboardVisible, ncomponents, isPinInput } = dataPinInput;
+  const { setIsInputFocus } = dataInput;
 
-    } else if (pinSelected === index && textInputRef.current) {
-      //textInputRef.current[index].focus();
-    }
-  }, [pinSelected])*/
-
-  /*useEffect(()=>{
-    alert(JSON.stringify(textInputRef.current, null, 2))
-  }, [textInputRef.current[index]])*/
+  useEffect(()=>{
+    setIsInputFocus(true)
+  }, [pinSelected])
 
   return(
     <Input 
-      ref={ref}
       centered
       placeholder="X"
       inputMode="numeric"
@@ -33,6 +23,12 @@ const PinInput = forwardRef(({ index, dataPinInput, nextRef }, ref) => {
       styles={styles}
       dataInput={{ 
         ...dataInput,
+        isPinInput: isPinInput,
+        ncomponents: ncomponents,
+        pinSelected: pinSelected,
+        isKeyboardVisible: isKeyboardVisible,
+        setIsKeyboardVisible: setIsKeyboardVisible,
+        index: index,
         styleinput: {
           width: 100*consts.px,
           height: 100*consts.px,
@@ -44,28 +40,28 @@ const PinInput = forwardRef(({ index, dataPinInput, nextRef }, ref) => {
         },
         stateValue: [value, setValue],
         textprops: {
-          onFocus: ()=>{
-            setPinSelected(index);
-            setShowBack(true)
-            setIsInputFocus(true)
-          },
+          autoFocus: index === 0 ? true : false,
           maxLength: 1,
-          onChangeText: (text)=>{
-            
-            setValue(text)
-            if (text.length > 0 && index < 4) {
-              setIsInputFocus(false)
-              //nextRef.focus();
-            }
+
+          onFocus: ()=>{
+            setIsInputFocus(true)
+            setIsKeyboardVisible(true)
           },
-          onBlur: ()=>{
-            setIsInputFocus(false)
-            setShowBack(false)
+          onChangeText: (text)=>{
+            setValue(text)
+            if (text.length > 0 && index < ncomponents) {
+              setIsInputFocus(false)
+              setPinSelected(index+1)
+              
+              if (index === ncomponents-1) {
+                setIsKeyboardVisible(false)
+              }
+            }
           },
         }
       }}
     />
   )
-});
+};
 
 export default PinInput;

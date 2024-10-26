@@ -7,8 +7,8 @@ import ButtonBack from '../buttonBack/ButtonBack';
 
 
 const ForgotPass1 = ({ dataForgotPassword }) => {
-  const { dataPages, compStyles, pagefp, setPagefp } = dataForgotPassword;
-  const { styles, mode, theme, consts, dataInput, showDebugMenu, setShowDebugMenu, dataButtonBack, showBack, setIsInputFocus, setPage } = dataPages;
+  const { dataPages, compStyles, setPagefp } = dataForgotPassword;
+  const { styles, mode, theme, consts, dataInput, showDebugMenu, setShowDebugMenu, dataButtonBack, isInputFocus, setIsInputFocus, setPage } = dataPages;
 
   return(
     <View style={ compStyles.container } >
@@ -16,9 +16,9 @@ const ForgotPass1 = ({ dataForgotPassword }) => {
       <ButtonBack 
         dataButtonBack={{ 
           ...dataButtonBack, 
-          showBack: true,
+          isInputFocus: true,
           onPress: ()=>{
-            if(showBack){
+            if(isInputFocus){
               setIsInputFocus(false)
             }else{
               setPage(1)
@@ -66,7 +66,10 @@ const ForgotPass1 = ({ dataForgotPassword }) => {
         theme={theme}
         consts={consts}
         styles={styles}
-        dataInput={dataInput} />
+        dataInput={{
+          ...dataInput,
+          maxLength: 50,
+        }} />
       <ContrastingButton 
         text="Send" 
         theme={theme} 

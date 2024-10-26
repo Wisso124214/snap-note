@@ -4,7 +4,7 @@ import SvgIconProvider from '../svg/svgIconProvider';
 
 const ButtonBack = ({ dataButtonBack, styleview }) => {
 
-  const { theme, mode, consts, setIsInputFocus, showBack, onPress } = dataButtonBack;
+  const { theme, mode, consts, setIsInputFocus, isInputFocus, onPress } = dataButtonBack;
 
   const compStyles = {
     icon:
@@ -15,7 +15,7 @@ const ButtonBack = ({ dataButtonBack, styleview }) => {
   }
 
   return (
-    showBack ? 
+    isInputFocus ? 
     <View style={{
       position: 'absolute',
       top: 150 * consts.px,
@@ -29,7 +29,10 @@ const ButtonBack = ({ dataButtonBack, styleview }) => {
           width: 60 * consts.px,
           height: 60 * consts.px,
         }}
-        onPress={onPress}
+        onPress={()=>{
+          setIsInputFocus(false)
+          onPress();
+        }}
       >
         <SvgIconProvider
           src='styles.icon'

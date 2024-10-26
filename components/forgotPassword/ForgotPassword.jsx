@@ -7,6 +7,7 @@ import ButtonBack from '../buttonBack/ButtonBack';
 import ForgotPass1 from './ForgotPass1';
 import { set } from 'lodash';
 import ForgotPass2 from './ForgotPass2';
+import ForgotPass3 from './ForgotPass3';
 
 const ForgotPassword = ({ dataPages }) => {
   
@@ -50,6 +51,7 @@ const ForgotPassword = ({ dataPages }) => {
   const forgotpassword = [
     <ForgotPass1 dataForgotPassword={dataForgotPassword} />,
     <ForgotPass2 dataForgotPassword={dataForgotPassword} />,
+    <ForgotPass3 dataForgotPassword={dataForgotPassword} />,
   ]
 
   return (

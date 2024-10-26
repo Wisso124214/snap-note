@@ -2,11 +2,14 @@ import { TouchableHighlight } from "react-native";
 import SvgIconProvider from "../svg/svgIconProvider";
 
 
-const ThemeModeButton = ({ mode, setMode, styles, theme }) => {
+const ThemeModeButton = ({ dataIconButton, scale }) => {
+
+  const { mode, setMode, styles, theme } = dataIconButton;
+
   return(
     <TouchableHighlight
-      onPress={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-      style={{ marginHorizontal: 10, width: 50, backgroundColor: theme[mode].backgroundColor, borderRadius: 100, height: 50 }}
+      onPress={()=>setMode(mode === 'dark' ? 'light' : 'dark' )}
+      style={{ marginHorizontal: 10, width: 50*scale, backgroundColor: theme[mode].backgroundColor, borderRadius: 100, height: 50*scale }}
       underlayColor={theme[mode].color+'50'}
     > 
       {mode === 'dark' ? 
@@ -21,7 +24,6 @@ const ThemeModeButton = ({ mode, setMode, styles, theme }) => {
         : <SvgIconProvider 
             top={4}
             left={4}
-
             styles={styles}
             src="styles.icons.small"
             strprops='color, px, scale'

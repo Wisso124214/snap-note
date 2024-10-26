@@ -2,12 +2,10 @@ import React, { forwardRef, useEffect, useRef } from 'react';
 import { View, SafeAreaView, TextInput } from 'react-native';
 import SvgIconProvider from '../svg/svgIconProvider.jsx';
 
-const Input = forwardRef((props, ref) => {
+const Input = (props) => {
+  const textInputRef = useRef(null);
   
-  
-  const textInputRef = ref || useRef(null);
-  
-  const { styles, theme, mode, onChangeText, consts, setShowBack, showBack, isInputFocus, setIsInputFocus, styleinput, viewprops, textprops } = props.dataInput;
+  const { styles, theme, mode, onChangeText, consts, isInputFocus, setIsInputFocus, styleinput, viewprops, textprops, pinSelected, index, isKeyboardVisible, isPinInput, isRegisterInput, nInputSelected, isLoginInput } = props.dataInput;
   const [value, setValue] = props.dataInput.stateValue || React.useState('')
   
   const left = props.centered !== undefined ? 0 : 40 * consts.expo;
@@ -34,9 +32,9 @@ const Input = forwardRef((props, ref) => {
       left: -80 * consts.expo,
     }
   };
-
+  
   useEffect(() => {
-    if (props.secretWriting === true) {
+    if (props.secretWriting === true && !isLoginInput) {
       let newValue = ''
       if (value !== undefined) {
         newValue = value.split('').map((el, i) => {
@@ -51,10 +49,21 @@ const Input = forwardRef((props, ref) => {
   }, [value])
 
   useEffect(() => {
-    if (isInputFocus === false && textInputRef.current) {
+
+    if (isInputFocus === false && textInputRef.current && !isKeyboardVisible) {
       textInputRef.current.blur();
     }
-  }, [isInputFocus])
+
+    if(isPinInput){
+      if (isInputFocus === true && index === pinSelected && textInputRef.current && !textInputRef.current.isFocused() && isPinInput) {
+        textInputRef.current.focus();
+      }
+    }else if (isRegisterInput) {
+      if (isInputFocus === true && index === nInputSelected && textInputRef.current && isRegisterInput) {
+        textInputRef.current.focus();
+      }
+    }
+  }, [isInputFocus, nInputSelected, pinSelected, isPinInput, isRegisterInput])
 
   return (
     <View {...viewprops} style={props.style}>
@@ -70,7 +79,7 @@ const Input = forwardRef((props, ref) => {
           <TextInput
             ref={textInputRef}
             style={compStyles.input}
-            value={value}
+            value={isLoginInput ? value[index] : value}
             placeholder={props.placeholder}
             cursorColor={theme[mode].color}
             selectionColor={theme[mode].noMode}
@@ -81,15 +90,10 @@ const Input = forwardRef((props, ref) => {
             autoComplete='off'
 
             onFocus={() => {
-              setShowBack(true)
               setIsInputFocus(true)
             }}
-            onBlur={() => {
-              setShowBack(false)
-              setIsInputFocus(false)
-            }}
             onChangeText={(text) => {
-              setValue(text)
+              !isLoginInput ? setValue(text) : null
             }}
             
             {...textprops}
@@ -98,6 +102,6 @@ const Input = forwardRef((props, ref) => {
       </SafeAreaView>
     </View>
   );
-});
+};
 
 export default Input;

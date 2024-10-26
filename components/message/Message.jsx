@@ -26,8 +26,7 @@ const Message = (props) => {
             justifyContent: 'center',
             alignItems: 'center',
             ...style,
-          }} 
-          
+          }}
         >
           <View 
             >
