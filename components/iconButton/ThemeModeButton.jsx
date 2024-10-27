@@ -31,8 +31,8 @@ const ThemeModeButton = ({ dataIconButton, scale, styleButton }) => {
         
         /**Moon */
         : <SvgIconProvider 
-            top={4}
-            left={4}
+            top={4*scale}
+            left={4*scale}
             styles={compStyles}
             src="styles"
             strprops='color, px, scale'

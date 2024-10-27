@@ -51,14 +51,12 @@ const Register = ({ dataPages }) => {
     hidden: false,
   }
 
-  const [isHiddenIconQuestion, setIsHiddenIconQuestion] = useState(true);
-
   const { isHiddenMssg, setIsHiddenMssg, textMssg, setTestMssg, colorMssg, setColorMssg } = dataMssg;
   const [nInputSelected, setnInputSelected] = useState(-1);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [passwordState, setPasswordState] = useState('');
 
-  const listUsernames = ['user2024', 'user2020', 'user12', 'user123', 'userxx']
+  const listUsernames = ['User2024', 'User2020', 'User12', 'User123', 'Userxx']
   
   // Hidden en true sería "validation error", hidden en false sería "validation success"
   const objValidations = {
@@ -68,7 +66,7 @@ const Register = ({ dataPages }) => {
         dataValidation: useState({
           lineNumbers: 1,
           text: '',
-          hidden: true,
+          hidden: false,
         }),
       },
     },
@@ -78,7 +76,7 @@ const Register = ({ dataPages }) => {
         dataValidation: useState({
           lineNumbers: 1,
           text: '',
-          hidden: true,
+          hidden: false,
         }),
       },
     },
@@ -89,7 +87,7 @@ const Register = ({ dataPages }) => {
         dataValidation: useState({
           lineNumbers: 1,
           text: '',
-          hidden: true,
+          hidden: false,
         }),
       },
     },
@@ -99,7 +97,7 @@ const Register = ({ dataPages }) => {
         dataValidation: useState({
           lineNumbers: 1,
           text: '',
-          hidden: true,
+          hidden: false,
         }),
       },
     },
@@ -114,6 +112,14 @@ const Register = ({ dataPages }) => {
   useEffect(()=>{
     !isKeyboardVisible ? setIsInputFocus(false) : null
   }, [isKeyboardVisible])
+
+  useEffect(()=>{
+    if(!isHiddenMssg){
+      setTimeout(() => {
+        setIsHiddenMssg(true)
+      }, 3000);
+    }
+  },[isHiddenMssg])
 
   return (
     <View
@@ -283,7 +289,7 @@ const Register = ({ dataPages }) => {
                     }
                   }}
                   />
-                <View >
+                <View>
 
                 <Input
                   placeholder="Enter password"
@@ -476,17 +482,40 @@ const Register = ({ dataPages }) => {
                 consts={consts} 
                 styles={{ marginTop: 70 * consts.px }} 
                 onPress={() => {
-                  const result = 'error'; // Here should be the login logic
 
-                  if (result === 'error') {
-                    setIsHiddenMssg(false);
-                    setTestMssg('User or password are wrong');
+                  const allFilled = 
+                    objValidations.username.stateValue[0] !== '' &&
+                    objValidations.email.stateValue[0] !== '' &&
+                    objValidations.password.stateValue[0] !== '' &&
+                    objValidations.confirmPassword.stateValue[0] !== '' 
+
+                  if (!allFilled) {
+                    setTestMssg('Please fill in all fields');
                     setColorMssg(theme[mode].errorColor);
-                    setIsHiddenIconQuestion(false);
-
-                  } else if (result === 'success') {
                     setIsHiddenMssg(false);
+                    
+                  } else {
+                    const validation = 
+                      objValidations.username.dataMessage.dataValidation[0].hidden &&
+                      objValidations.email.dataMessage.dataValidation[0].hidden &&
+                      objValidations.password.dataMessage.dataValidation[0].hidden &&
+                      objValidations.confirmPassword.dataMessage.dataValidation[0].hidden
+  
+                    if (validation) {
+                      setTestMssg('Sign up successful');
+                      setColorMssg(theme[mode].successColor);
+                      setIsHiddenMssg(false);
+                      setTimeout(() => {
+                        setPage(4);
+                      }, 1000);
+    
+                    } else {
+                      setTestMssg('Please correct the errors');
+                      setColorMssg(theme[mode].errorColor);
+                      setIsHiddenMssg(false);
+                    }
                   }
+                  
                 }}
                 />
               
@@ -516,10 +545,29 @@ const Register = ({ dataPages }) => {
                     textShadowOffset: { width: 2, height: 2 },
                     textShadowRadius: 6,
                   }}>
-                  Log in.
+                  Sign in.
                 </Text>
               </TouchableOpacity>
             </View>
+            <Message 
+              dataMessage={{
+                ...dataMessage,
+                style: {
+                  top: -775 * consts.px,
+                  left: -(460/2) * consts.px,
+                  width: 460 * consts.px,
+                  zIndex: 3,
+                  borderWidth: 1 * consts.px,
+                  borderColor: theme[mode].noColor,
+                },
+                hidden: isHiddenMssg,
+                theme: theme,
+                consts: consts,
+                mode: mode,
+                text: textMssg,
+                bgcolor: colorMssg,
+              }}
+            />
           </View>
         </View>
       </View>

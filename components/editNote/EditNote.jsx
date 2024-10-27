@@ -2,10 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import IconButton from '../iconButton/IconButton';
 import ThemeModeButton from '../iconButton/ThemeModeButton';
+import ContrastingButton from '../contrastingButton/ContrastingButton';
 
 const EditNote = ({ dataPages }) => {
 
-  const { mode, theme, consts } = dataPages;
+  const { mode, theme, consts, setPage } = dataPages;
 
   const compStyles = {
     icons: {
@@ -37,15 +38,36 @@ const EditNote = ({ dataPages }) => {
   }
 
   return(
-    <View>
-      <Text style={{color: theme[mode].color}} >EditNote</Text>
+    <View 
+      style={{
+        width: '100%',
+        height: '100%',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Text style={{color: theme[mode].color}} >You have already logged in</Text>
+      
+      <ContrastingButton
+        text="Log out"
+        theme={theme} 
+        mode={mode} 
+        consts={consts} 
+        styles={{ marginVertical: 30 * consts.px }}
+        onPress={()=>setPage(1)}
+      />
+      
+
       <View
         style={{
           flexDirection: 'row',
           marginVertical: 20,
           position: 'absolute',
-          top: -650*consts.px,
-          left: -20*consts.px,
+          //top: -650*consts.px,
+          //left: 80*consts.px,
+          top: 80*consts.px,
+          right: 40*consts.px,
           
         }}
       >

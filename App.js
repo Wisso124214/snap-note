@@ -21,10 +21,10 @@ export default function App() {
   const devMode = {
   power: 'on',
     on: {
-      timeToLoad: 1,
+      timeToLoad: 3000,
       debugMenuEnabled: true,
-      page: 3,
-      pagefp: 0,
+      page: 2,
+      pagefp: 2,
       appState: 'running',
       showDebugMenu: false,
     },
@@ -211,6 +211,9 @@ export default function App() {
         setIsInputFocus(false);
         break;
       case 2:
+        setIsHiddenMssg(true);
+        break;
+      case 3:
         setIsHiddenMssg(true);
         break;
     }

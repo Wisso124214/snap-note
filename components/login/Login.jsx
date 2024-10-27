@@ -143,16 +143,7 @@ const Login = ({ dataPages }) => {
                       setIsKeyboardVisible(false);
                     },
                     onChangeText: (text) => {
-                      let newValue = text
-                      if (text !== undefined) {
-                        newValue = text.split('').map((el, i) => {
-                          if (i < text.length)
-                            return '●'
-                          else
-                            return el
-                        }).join('')
-                      }
-                      setTextInput((prev)=>[textInput[0], newValue]);
+                      setTextInput((prev)=>[textInput[0], text]);
                     }
                   }
                 }} />
@@ -165,16 +156,16 @@ const Login = ({ dataPages }) => {
               consts={consts} 
               styles={{ marginTop: 50 * consts.px, marginBottom: 260 * consts.px }} 
               onPress={() => {
-                // Here should be the login logic
-                //const result = 'error'; 
-
-                if (textInput[0] === 'Error') {
-                  setTestMssg('User or password are wrong');
+                
+                if (textInput[0] === '' || textInput[1] === '') {
+                  setTestMssg('Please fill in all fields');
                   setColorMssg(theme[mode].errorColor);
                   setIsHiddenIconQuestion(false);
                   setIsHiddenMssg(false);
-                  
-                } else if (textInput[0] === 'Success') {
+                  return;
+                }
+                
+                if (textInput[0] === 'UserURU' && textInput[1] === 'Password123$') {
                   setTestMssg('Login successful');
                   setColorMssg(theme[mode].successColor);
                   setIsHiddenIconQuestion(true);
@@ -182,6 +173,12 @@ const Login = ({ dataPages }) => {
                   setTimeout(() => {
                     setPage(4);
                   }, 1000);
+
+                } else {
+                  setTestMssg('User or password are wrong');
+                  setColorMssg(theme[mode].errorColor);
+                  setIsHiddenIconQuestion(false);
+                  setIsHiddenMssg(false);
                 }
               }}
               />
@@ -227,10 +224,8 @@ const Login = ({ dataPages }) => {
                   }}
                 /> 
               </TouchableHighlight>
-
             }
-
-              
+             
             <View
               style={{
                 display: 'flex',
