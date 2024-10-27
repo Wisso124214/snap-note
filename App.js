@@ -4,8 +4,7 @@ import * as NavigationBar from 'expo-navigation-bar';
 import { 
   Text, 
   View, 
-  TouchableOpacity, 
-  Pressable,
+  TouchableOpacity,
   Animated,
   Appearance,
 } from 'react-native';
@@ -13,10 +12,8 @@ import {
 import LoadingScreen from './components/loadingScreen/LoadingScreen';
 import Login from './components/login/Login';
 import ForgotPassword from './components/forgotPassword/ForgotPassword';
-import { set } from 'lodash';
 import Register from './components/register/Register';
 import EditNote from './components/editNote/EditNote';
-import IconButton from './components/iconButton/IconButton';
 import ThemeModeButton from './components/iconButton/ThemeModeButton';
 
 export default function App() {
@@ -26,10 +23,10 @@ export default function App() {
     on: {
       timeToLoad: 1,
       debugMenuEnabled: true,
-      page: 4,
+      page: 3,
       pagefp: 0,
       appState: 'running',
-      showDebugMenu: true,
+      showDebugMenu: false,
     },
     off: {
       timeToLoad: 3000,
@@ -38,8 +35,7 @@ export default function App() {
       pagefp: 0,
       appState: 'initializing',
       showDebugMenu: false,
-    }
-    
+    },
   }
   
   const [mode, setMode] = useState(Appearance.getColorScheme())
@@ -139,6 +135,12 @@ export default function App() {
     styles: styles,
   }
 
+  const dataMessage = {
+    theme: theme,
+    mode: mode,
+    consts: consts,
+  }
+
   const dataPages = {
     theme: theme,
     mode: mode,
@@ -157,15 +159,16 @@ export default function App() {
     dataButtonBack: dataButtonBack,
     dataPinInput: dataPinInput,
     dataIconButton: dataIconButton,
+    dataMessage: dataMessage,
   }
   
   //DO NOT CHANGE THE ORDER
   const debug = [
-    <LoadingScreen dataPages={dataPages} />,
-    <Login dataPages={dataPages} />,
-    <ForgotPassword dataPages={dataPages} />,
-    <Register dataPages={dataPages} />,
-    <EditNote dataPages={dataPages} />,
+/* 00 */  <LoadingScreen dataPages={dataPages} />,
+/* 01 */  <Login dataPages={dataPages} />,
+/* 02 */  <ForgotPassword dataPages={dataPages} />,
+/* 03 */  <Register dataPages={dataPages} />,
+/* 04 */  <EditNote dataPages={dataPages} />,
   ]
   
   NavigationBar.setBackgroundColorAsync(theme[mode].backgroundColor);
@@ -255,6 +258,9 @@ const theme = {
     noMode: 'light',
     errorColor: '#B81414',
     successColor: '#30CC00',
+    highSafety: '#30CC00',
+    mediumSafety: '#C8AE04',
+    lowSafety: '#FF0000',
   },
   light: {
     backgroundColor: '#23DBDC',
@@ -265,7 +271,10 @@ const theme = {
     shadowTitle: '#777777',
     icons: "#444444",
     noMode: 'dark',
-    errorColor: '#760D0D',
+    errorColor: '#A11212',
     successColor: '#124D00',
+    highSafety: '#124D00',
+    mediumSafety: '#7D6D02',
+    lowSafety: '#760D0D',
   },
 }

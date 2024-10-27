@@ -6,13 +6,13 @@ import ContrastingButton from '../contrastingButton/ContrastingButton';
 import ButtonBack from '../buttonBack/ButtonBack';
 
 
-const ForgotPass1 = ({ dataForgotPassword }) => {
+const ForgotUsernames = ({ dataForgotPassword }) => {
   const { dataPages, compStyles, setPagefp } = dataForgotPassword;
   const { styles, mode, theme, consts, dataInput, showDebugMenu, setShowDebugMenu, dataButtonBack, isInputFocus, setIsInputFocus, setPage } = dataPages;
 
   return(
     <View style={ compStyles.container } >
-      <Text style={ compStyles.header } >Forgot Password</Text>
+      <Text style={ compStyles.header } >Forgot Usernames</Text>
       <ButtonBack 
         dataButtonBack={{ 
           ...dataButtonBack, 
@@ -31,29 +31,40 @@ const ForgotPass1 = ({ dataForgotPassword }) => {
           left: -20 * consts.px,
         }} />
 
-      <Svg
+      <Svg 
         xmlns="http://www.w3.org/2000/svg" 
-        viewBox="0 0 15 15 "
+        viewBox="0 0 32 32"
         style={{ 
           width: 230*consts.px, 
           height: 230*consts.px,
-          marginBottom: 60*consts.px,
+          marginBottom: 50*consts.px,
         }}
         onPress={()=> setShowDebugMenu(!showDebugMenu) }
-      >
-        <Path
-          fill={theme[mode].icons}
-          fillRule="evenodd"
-          d="M7.5.875a3.625 3.625 0 0 0-1.006 7.109c-1.194.145-2.218.567-2.99 1.328-.982.967-1.479 2.408-1.479 4.288a.475.475 0 1 0 .95 0c0-1.72.453-2.88 1.196-3.612.744-.733 1.856-1.113 3.329-1.113s2.585.38 3.33 1.113c.742.733 1.195 1.892 1.195 3.612a.475.475 0 1 0 .95 0c0-1.88-.497-3.32-1.48-4.288-.77-.76-1.795-1.183-2.989-1.328A3.627 3.627 0 0 0 7.5.875ZM4.825 4.5a2.675 2.675 0 1 1 5.35 0 2.675 2.675 0 0 1-5.35 0Z"
-          clipRule="evenodd"
-        />
+        >
+          <Path 
+            fill={theme[mode].icons}
+            d="M16.59 20.41 20.17 24l-3.59 3.59L18 29l5-5-5-5-1.41 1.41zM23.59 20.41 27.17 24l-3.59 3.59L25 29l5-5-5-5-1.41 1.41z" />
+          <Path
+            fill={theme[mode].icons}
+            d="M14 23H4V7.91l11.43 7.91a1 1 0 0 0 1.14 0L28 7.91V17h2V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10ZM25.8 7 16 13.78 6.2 7Z" />
+          <Path
+            d="M0 0h32v32H0z"
+            data-name="&lt;Transparent Rectangle&gt;"
+            style={{
+              fill: 'none',
+            }}
+          />
       </Svg>
 
-      <Text style={ compStyles.title } >Enter username</Text>
-      <Text style={ compStyles.text } >We will send a code to the associated email.</Text>
+      <Text style={ compStyles.title } >Enter email address</Text>
+      <Text style={{
+        ...compStyles.text,
+        width: 560*consts.px,
+        textAlign: 'center',
+      }} >We will send you the usernames associated with your email.</Text>
       <Input 
         centered
-        placeholder="Username"
+        placeholder="example@example.com"
         style={{ marginBottom: 150*consts.px }}
         mode={mode}
         theme={theme}
@@ -73,4 +84,4 @@ const ForgotPass1 = ({ dataForgotPassword }) => {
   )
 }
 
-export default ForgotPass1;
+export default ForgotUsernames;

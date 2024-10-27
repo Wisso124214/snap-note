@@ -8,6 +8,7 @@ import ForgotPass1 from './ForgotPass1';
 import { set } from 'lodash';
 import ForgotPass2 from './ForgotPass2';
 import ForgotPass3 from './ForgotPass3';
+import ForgotUsernames from '../forgotUsernames/ForgotUsernames';
 
 const ForgotPassword = ({ dataPages }) => {
   

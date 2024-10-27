@@ -3,7 +3,7 @@ import SvgIconProvider from "../svg/svgIconProvider";
 import { size } from "lodash";
 
 
-const IconButton = ({ dataIconButton, onPress, dCodeIcon, src, strprops, styles, sizeButton }) => {
+const IconButton = ({ dataIconButton, onPress, dCodeIcon, src, strprops, styles, sizeButton, styleButton }) => {
 
   const { mode, theme } = dataIconButton;
 
@@ -15,7 +15,7 @@ const IconButton = ({ dataIconButton, onPress, dCodeIcon, src, strprops, styles,
   return(
     <TouchableHighlight
       onPress={onPress}
-      style={{ marginHorizontal: 10, width: sizeButton, height: sizeButton, backgroundColor: theme[mode].backgroundColor, borderRadius: 100 }}
+      style={{ marginHorizontal: 10, width: sizeButton, height: sizeButton, backgroundColor: theme[mode].backgroundColor, borderRadius: 100, ...styleButton }}
       underlayColor={theme[mode].color+'50'}
     >
       <SvgIconProvider 

@@ -9,7 +9,7 @@ import SvgIconProvider from "../svg/svgIconProvider";
 
 const Login = ({ dataPages }) => {
   
-  const { theme, styles, mode, consts, dataInput, showDebugMenu, setShowDebugMenu, setPage, devMode, dataMssg, dataButtonBack, setIsInputFocus } = dataPages;
+  const { theme, styles, mode, consts, dataInput, showDebugMenu, setShowDebugMenu, setPage, devMode, dataMssg, dataButtonBack, setIsInputFocus, dataMessage } = dataPages;
   const { isHiddenMssg, setIsHiddenMssg, textMssg, setTestMssg, colorMssg, setColorMssg } = dataMssg;
   
   const [isHiddenIconQuestion, setIsHiddenIconQuestion] = useState(true);
@@ -259,7 +259,22 @@ const Login = ({ dataPages }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <Message hidden={isHiddenMssg} theme={theme} consts={consts} mode={mode} text={textMssg} bgcolor={colorMssg} />
+            <Message 
+              dataMessage={{
+                ...dataMessage,
+                style: {
+                  top: -775 * consts.px,
+                  left: -(460/2) * consts.px,
+                  width: 460 * consts.px,
+                },
+                hidden: isHiddenMssg,
+                theme: theme,
+                consts: consts,
+                mode: mode,
+                text: textMssg,
+                bgcolor: colorMssg,
+              }}
+            />
           </View>
         </View>
       </View>
