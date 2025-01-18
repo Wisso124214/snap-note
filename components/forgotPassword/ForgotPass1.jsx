@@ -8,7 +8,9 @@ import ButtonBack from '../buttonBack/ButtonBack';
 
 const ForgotPass1 = ({ dataForgotPassword }) => {
   const { dataPages, compStyles, setPagefp } = dataForgotPassword;
-  const { styles, mode, theme, consts, dataInput, showDebugMenu, setShowDebugMenu, dataButtonBack, isInputFocus, setIsInputFocus, setPage } = dataPages;
+  const { styles, mode, theme, consts, dataInput, showDebugMenu, setShowDebugMenu, 
+          dataButtonBack, isInputFocus, setIsInputFocus, setStrPage 
+        } = dataPages;
 
   return(
     <View style={ compStyles.container } >
@@ -21,14 +23,15 @@ const ForgotPass1 = ({ dataForgotPassword }) => {
             if(isInputFocus){
               setIsInputFocus(false)
             }else{
-              setPage(1)
+              setStrPage('login')
             }
           }
         }} 
         styleview={{
           position: 'absolute',
+          width: '100%',
           top: 115 * consts.px,
-          left: -20 * consts.px,
+          left: 90 * consts.px,
         }} />
 
       <Svg

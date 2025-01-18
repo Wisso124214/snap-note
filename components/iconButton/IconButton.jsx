@@ -8,7 +8,7 @@ const IconButton = ({ dataIconButton, onPress, dCodeIcon, src, strprops, styles,
   const { mode, theme } = dataIconButton;
 
   styles = styles === undefined ? dataIconButton.styles : styles;
-  src = src === undefined ? 'styles.icons.small' : src;
+  src = src === undefined ? 'styles' : src;
   strprops = strprops === undefined ? 'color, px, scale, top, left' : strprops;
   sizeButton = sizeButton === undefined ? 50 : sizeButton;
 

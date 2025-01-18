@@ -1,5 +1,6 @@
 import React from 'react';
 import SvgIcon from './SvgIcon';
+import { View } from 'react-native';
 
 const SvgIconProvider = (props) => {
 
@@ -10,15 +11,18 @@ const SvgIconProvider = (props) => {
   window.styles = props.styles
 
   let obj = {}
-  let arr = props.strprops.split(',')
+  let arr = props.strprops ? props.strprops.split(',') : ['color', 'px', 'top', 'left']
+  const src = props.src ? props.src : 'styles'
 
   arr.forEach((item) => {
     let str = item.replace(/\s/g, '');
-    obj[str] = eval(props.src+'.'+str)
+    obj[str] = eval(src+'.'+str)
   })
 
   return(
-    <SvgIcon {...props} {...obj} d={props.d} />
+    <View style={props.style}>
+      <SvgIcon {...props} {...obj} d={props.d} />
+    </View>
   )
 }
 

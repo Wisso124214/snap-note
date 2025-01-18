@@ -26,6 +26,8 @@ const ContrastingButton = ({ text, theme, mode, consts, styles, onPress })=>{
             textShadowColor: theme[mode].noColor,
             textShadowOffset: {width: 1, height: 0},
             textShadowRadius: 1,
+            width: '100%',
+            textAlign: 'center',
            }} >{text}</Text>
       </TouchableOpacity>
     </View>

@@ -7,7 +7,7 @@ import PinInput from '../pinInput/PinInput';
 
 
 const ForgotPass2 = ({ dataForgotPassword }) => {
-  const { dataPages, compStyles, setPagefp, pagefp } = dataForgotPassword;
+  const { dataPages, compStyles, setPagefp, pagefp, devMode } = dataForgotPassword;
   const { styles, mode, theme, consts, showDebugMenu, setShowDebugMenu, dataButtonBack, isInputFocus, setIsInputFocus, dataPinInput } = dataPages;
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [pinSelected, setPinSelected] = React.useState(0);
@@ -40,7 +40,7 @@ const ForgotPass2 = ({ dataForgotPassword }) => {
         styleview={{
           position: 'absolute',
           top: 115 * consts.px,
-          left: 43.5 * consts.px,
+          left: 90 * consts.px,
         }} />
 
       <Svg
@@ -78,6 +78,7 @@ const ForgotPass2 = ({ dataForgotPassword }) => {
               key={index}
               dataPinInput={{
                 ...dataPinInput,
+                devMode: devMode,
                 isPinInput: true,
                 ncomponents: ncomponents,
                 isKeyboardVisible: isKeyboardVisible,

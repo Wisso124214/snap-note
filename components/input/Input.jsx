@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, SafeAreaView, TextInput } from 'react-native';
 import SvgIconProvider from '../svg/svgIconProvider.jsx';
 import Message from '../message/Message.jsx';
@@ -8,14 +8,14 @@ const Input = (props) => {
   
   const { styles, theme, mode, onChangeText, consts, isInputFocus, setIsInputFocus, styleinput, 
           viewprops, textprops, pinSelected, index, isKeyboardVisible, isPinInput, isRegisterInput, 
-          nInputSelected, isLoginInput, dataMessage 
+          nInputSelected, isLoginInput, dataMessage, defaultValue
         } = props.dataInput;
 
-  const [value, setValue] = props.dataInput.stateValue || React.useState('')
+  const [value, setValue] = props.dataInput.stateValue || React.useState(defaultValue)
   const [seePassword, setSeePassword] = React.useState(false);
   
   const left = props.centered !== undefined ? 0 : 40 * consts.expo;
-  const finalValue = isLoginInput ? value[index] : value
+  const finalValue = isLoginInput ? props.dataInput.stateValue[0][index] : value ? value : '';
 
   const compStyles = {
     container: {
@@ -103,8 +103,12 @@ const Input = (props) => {
                   bottom: 10*consts.px,
                   right: -65*consts.px,
                   zIndex: 2,
-                }
-              }} /> 
+                },
+                consts: consts,
+                theme: theme,
+                consts: consts,
+                mode: mode,
+              }} />
               : null
           }
           <SvgIconProvider
@@ -124,9 +128,10 @@ const Input = (props) => {
                 }
                 : isLoginInput ?
                 { ...compStyles.input,
-                  paddingRight: props.secretWriting ? 100 * consts.px : 50 * consts.px,
+                  paddingRight: props.secretWriting ? 115 * consts.px : 50 * consts.px,
                 } : compStyles.input
-              : compStyles.input }
+                : compStyles.input 
+              }
             value={finalValue}
             placeholder={props.placeholder}
             cursorColor={theme[mode].color}
@@ -155,6 +160,7 @@ const Input = (props) => {
                 d="M14.765 6.076a.5.5 0 0 1 .159.689 9.519 9.519 0 0 1-1.554 1.898l1.201 1.201a.5.5 0 0 1-.707.707l-1.263-1.263a8.472 8.472 0 0 1-2.667 1.343l.449 1.677a.5.5 0 0 1-.966.258l-.458-1.709a8.666 8.666 0 0 1-2.918 0l-.458 1.71a.5.5 0 1 1-.966-.26l.45-1.676a8.473 8.473 0 0 1-2.668-1.343l-1.263 1.263a.5.5 0 0 1-.707-.707l1.2-1.201A9.521 9.521 0 0 1 .077 6.765a.5.5 0 1 1 .848-.53 8.425 8.425 0 0 0 1.77 2.034A7.462 7.462 0 0 0 7.5 9.999c2.808 0 5.156-1.493 6.576-3.764a.5.5 0 0 1 .689-.159Z"
                 styles={compStyles}
                 onPress={()=> setSeePassword(!seePassword)}
+                style={isRegisterInput ? { top: -35 * consts.px, left: 65 * consts.px } : { top: -35 * consts.px, left: 82.5 * consts.px }}
               /> :
               <SvgIconProvider
                 src={isRegisterInput ? 'styles.eyePasswordRegister': 'styles.eyePasswordLogin'}
@@ -162,6 +168,7 @@ const Input = (props) => {
                 d="M7.5 11c-2.697 0-4.97-1.378-6.404-3.5C2.53 5.378 4.803 4 7.5 4s4.97 1.378 6.404 3.5C12.47 9.622 10.197 11 7.5 11Zm0-8C4.308 3 1.656 4.706.076 7.235a.5.5 0 0 0 0 .53C1.656 10.294 4.308 12 7.5 12s5.844-1.706 7.424-4.235a.5.5 0 0 0 0-.53C13.344 4.706 10.692 3 7.5 3Zm0 6.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
                 styles={compStyles}
                 onPress={()=> setSeePassword(!seePassword)}
+                style={isRegisterInput ? { top: -35 * consts.px, left: 65 * consts.px } : { top: -35 * consts.px, left: 82.5 * consts.px }}
               /> 
              : null
             }
@@ -173,12 +180,14 @@ const Input = (props) => {
                 strprops='color, px, top, left'
                 d="M11.782 4.032a.575.575 0 1 0-.813-.814L7.5 6.687 4.032 3.218a.575.575 0 0 0-.814.814L6.687 7.5l-3.469 3.468a.575.575 0 0 0 .814.814L7.5 8.313l3.469 3.469a.575.575 0 0 0 .813-.814L8.313 7.5l3.469-3.468Z"
                 styles={compStyles}
+                style={{ top: -35 * consts.px, left: 92.5 * consts.px }}
               /> :
               <SvgIconProvider
                 src='styles.validationIcons'
                 strprops='color, px, top, left'
                 d="M11.467 3.727c.289.189.37.576.181.865l-4.25 6.5a.625.625 0 0 1-.944.12l-2.75-2.5a.625.625 0 0 1 .841-.925l2.208 2.007 3.849-5.886a.625.625 0 0 1 .865-.181Z"
                 styles={compStyles}
+                style={{ top: -35 * consts.px, left: 92.5 * consts.px }}
               /> 
             : null
           }

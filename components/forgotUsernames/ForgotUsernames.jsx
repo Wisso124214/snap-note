@@ -8,7 +8,7 @@ import ButtonBack from '../buttonBack/ButtonBack';
 
 const ForgotUsernames = ({ dataForgotPassword }) => {
   const { dataPages, compStyles, setPagefp } = dataForgotPassword;
-  const { styles, mode, theme, consts, dataInput, showDebugMenu, setShowDebugMenu, dataButtonBack, isInputFocus, setIsInputFocus, setPage } = dataPages;
+  const { styles, mode, theme, consts, dataInput, showDebugMenu, setShowDebugMenu, dataButtonBack, isInputFocus, setIsInputFocus, setStrPage } = dataPages;
 
   return(
     <View style={ compStyles.container } >
@@ -21,7 +21,7 @@ const ForgotUsernames = ({ dataForgotPassword }) => {
             if(isInputFocus){
               setIsInputFocus(false)
             }else{
-              setPage(1)
+              setStrPage('login')
             }
           }
         }} 

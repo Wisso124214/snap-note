@@ -10,8 +10,8 @@ const ThemeModeButton = ({ dataIconButton, scale, styleButton }) => {
   const compStyles = {
     ...styles,
     px: 38 * scale,
-    top: 3 * scale,
-    left: 3 * scale,
+    top: 3.5 * scale,
+    left: 3.5 * scale,
     color: theme[mode].icons,
   }
 

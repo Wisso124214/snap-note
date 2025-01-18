@@ -4,7 +4,7 @@ import Input from '../input/Input';
 const PinInput = ({ dataPinInput }) => {
 
   const [value, setValue] = React.useState('');
-  const { mode, theme, consts, styles, dataInput, pinSelected, setPinSelected, index, isKeyboardVisible, setIsKeyboardVisible, ncomponents, isPinInput } = dataPinInput;
+  const { mode, theme, consts, styles, dataInput, pinSelected, setPinSelected, index, isKeyboardVisible, setIsKeyboardVisible, ncomponents, isPinInput, devMode } = dataPinInput;
   const { setIsInputFocus } = dataInput;
 
   useEffect(()=>{
@@ -40,7 +40,7 @@ const PinInput = ({ dataPinInput }) => {
         },
         stateValue: [value, setValue],
         textprops: {
-          autoFocus: index === 0 ? true : false,
+          autoFocus: index === 0 && devMode[devMode.power].autoFocusInputFP2 ? true : false,
           maxLength: 1,
 
           onFocus: ()=>{

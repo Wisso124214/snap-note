@@ -8,17 +8,25 @@ Leyend:
 ✓✓ Create an function on icon password, when isHiddenIconQuestion is true, go to the forgot password
 ✓✓ The ButtonBack must have position absolute, to always be in the screen and not only up there
 ✓✓ Take an init the app with the theme mode on user's phone
- 
+✓✓ Unable sugestions on password's TextInput 
+✓✓ Show messages to success or error in each change of page
+✓✓ Fix the position of (?) on login, to go to ForgotPassword
+✓✓ Fix the error when defaultValueUsernameLogin is === ''
+✓✓ When EnterPasswordInput updates, check if ConfirmPasswordInput and EnterPasswordInput are equal
+✓✓ 
+
+
  Aesthetic:
  - DISENGAGE THE COMPONENTS! Login must be clean and simple, with styles only at fist, and custom components with childrens
  - Animation fade when the mode changed (dark-light)
  - Once the styles of an components are ready, add it on the compStyles, and not inline in the component
  - Create an animation to change pages (fade or slide to a side)
 
- Important:
- - Unable sugestions on password's TextInput 
- - Save the last mode used on DB user's table 
- - Show messages to success or error in each change of page
+ Important: 
+ - Save the last mode used on DB user's table
+ - Create a button in ForgotPassword to use when ForgotUsername (it just send you an email with his associated usernames)
+
+
 
 
 

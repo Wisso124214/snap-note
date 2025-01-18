@@ -31,6 +31,7 @@ const ButtonBack = ({ dataButtonBack, styleview }) => {
           borderRadius: 50 * consts.px,
           width: 60 * consts.px,
           height: 60 * consts.px,
+          zIndex: 1,
         }}
         onPress={()=>{
           setIsInputFocus(false)

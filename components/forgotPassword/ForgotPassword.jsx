@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Path } from "react-native-svg"
 import Input from '../input/Input';
@@ -10,16 +10,18 @@ import ForgotPass2 from './ForgotPass2';
 import ForgotPass3 from './ForgotPass3';
 import ForgotUsernames from '../forgotUsernames/ForgotUsernames';
 
-const ForgotPassword = ({ dataPages }) => {
+const ForgotPassword = ({ data }) => {
   
-  const { theme, mode, consts, devMode, dataPinInput } = dataPages;
-  const [pagefp, setPagefp] = React.useState(devMode[devMode.power].pagefp);
+  const { theme, mode, consts, devMode, dataPinInput } = data;
+  const [pagefp, setPagefp] = useState(devMode[devMode.power].pagefp);
 
   const compStyles = {
     container: {
       flex: 1,
       justifyContent: 'start',
       alignItems: 'center',
+      width: 709 * consts.px,      
+      height: '100%',
     },
     header: {
       fontWeight: 'bold',
@@ -39,14 +41,18 @@ const ForgotPassword = ({ dataPages }) => {
       color: theme[mode].color,
       marginBottom: 60 * consts.px,
     },
+    input: {
+      marginBottom: 50 * consts.px,
+    },
   }
 
   const dataForgotPassword = {
-    dataPages: dataPages,
+    dataPages: data,
     compStyles: compStyles,
     pagefp: pagefp,
     setPagefp: setPagefp,
     dataPinInput: dataPinInput,
+    devMode: devMode,
   }
   
   const forgotpassword = [

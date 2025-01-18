@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import * as NavigationBar from 'expo-navigation-bar';
-
-import { 
+import {
   Text, 
   View, 
   TouchableOpacity,
   Animated,
   Appearance,
+  ActivityIndicator,
 } from 'react-native';
 
 import LoadingScreen from './components/loadingScreen/LoadingScreen';
@@ -14,42 +14,67 @@ import Login from './components/login/Login';
 import ForgotPassword from './components/forgotPassword/ForgotPassword';
 import Register from './components/register/Register';
 import EditNote from './components/editNote/EditNote';
-import ThemeModeButton from './components/iconButton/ThemeModeButton';
+import DeviceAccounts from './components/deviceAccounts/DeviceAccounts';
+import UserAccounts from './components/userAccounts/UserAccounts';
+import axios from 'axios';
+import { SERVER_URL } from './config/config';
+import * as Application from 'expo-application'
+import DebugMenu from './components/debugMenu/DebugMenu';
 
 export default function App() {
-  
   const devMode = {
   power: 'on',
     on: {
-      timeToLoad: 3000,
+      timeLoading: 3000,
+      screenLoading: false,
       debugMenuEnabled: true,
-      page: 2,
+      strpage: 'editNote',
+      page: 0,
       pagefp: 2,
+      varpage: 'strpage',
       appState: 'running',
-      showDebugMenu: false,
+      showDebugMenu: true,
+      autoFocusInputFP2: false,
+      registerDebugging: true,
+      usernameDefault: 'UserURU',
+      emailDefault: 'luisdavidbustosnunez@gmail.com',
+      passwordDefault: 'Password123$',
     },
     off: {
-      timeToLoad: 3000,
+      timeLoading: 3000,
+      screenLoading: false,
       debugMenuEnabled: false,
+      strpage: 'loading',
       page: 0,
       pagefp: 0,
+      varpage: 'strpage',
       appState: 'initializing',
       showDebugMenu: false,
+      autoFocusInputFP2: true,
+      registerDebugging: false,
+      usernameDefault: '',
+      emailDefault: '',
+      passwordDefault: '',
     },
   }
   
   const [mode, setMode] = useState(Appearance.getColorScheme())
   const [page, setPage] = useState(devMode[devMode.power].page);
+  const [strpage, setStrPage] = useState(devMode[devMode.power].strpage);
   const opacityref = useRef(new Animated.Value(0)).current;
   const bgColor = useRef(new Animated.Value(0)).current;
   const [showDebugMenu, setShowDebugMenu] = useState(devMode[devMode.power].showDebugMenu);
   const [appState, setAppState] = useState(devMode[devMode.power].appState);
   const [isInputFocus, setIsInputFocus] = useState(false);
+  const [varpage, setVarPage] = useState(devMode[devMode.power].varpage);
+  const [bgColorNavBar, setBgColorNavBar] = useState(theme[mode].backgroundColor);
+  const [defaultValueUsernameLogin, setDefaultValueUsernameLogin] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [textLoading, setTextLoading] = useState('Loading...');
 
   const [isHiddenMssg, setIsHiddenMssg] = useState(true);
   const [textMssg, setTestMssg] = useState('Login successful');
   const [colorMssg, setColorMssg] = useState(theme[mode].successColor);
-  
 
   const consts = {
    px: 392.7/709,
@@ -61,7 +86,7 @@ export default function App() {
     container:
     {
       flex: 1,
-      backgroundColor: backgroundColorInterpolation,      //backgroundColor: theme[mode].backgroundColor,
+      backgroundColor: theme[mode].backgroundColor,      //backgroundColor: theme[mode].backgroundColor, backgroundColorInterpolation
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -85,6 +110,56 @@ export default function App() {
         px: 38,
         top: 3,
         left: 3,
+      }
+    },
+    popUp: {
+      background: {
+        position: 'absolute',
+        width: '100%',
+        height: 1552*consts.px,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme[mode].icons+Math.abs((theme[mode].opacityPopUp*256).toFixed(0)).toString(16),
+        zIndex: 2,
+      },
+      container: {
+        backgroundColor: theme[mode].icons,
+        borderRadius: 30*consts.px,
+        alignItems: 'center',
+        width: 450*consts.px,
+        height: 350*consts.px,
+      },
+      title : {
+        color: theme[mode].noColor,
+        fontSize: 35*consts.px,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        marginTop: 40*consts.px,
+        marginBottom: 30*consts.px,
+      },
+      input: {
+        borderColor: theme[mode].noColor,
+        width: 350*consts.px,
+        color: theme[mode].noColor,
+      },
+      placeholderInput: {
+        cursorColor: theme[mode].noColor,
+        selectionColor: mode,
+        placeholderTextColor: theme[mode].noIcons+'cc',
+      },
+      button: {
+        borderRadius: 30*consts.px,
+        padding: 20*consts.px,
+        width: 180*consts.px,
+        height: 70*consts.px,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      textButton: {
+        fontSize: 30*consts.px,
+        fontWeight: 'bold',
+        textAlign: 'center',
       }
     }
   };
@@ -151,8 +226,15 @@ export default function App() {
     styles: styles,
     showDebugMenu: showDebugMenu,
     setShowDebugMenu: setShowDebugMenu,
-    page: page,
-    setPage: setPage,
+    strpage: strpage,
+    setStrPage: setStrPage,
+    bgColorNavBar: bgColorNavBar,
+    setBgColorNavBar: setBgColorNavBar,
+    defaultValueUsernameLogin: defaultValueUsernameLogin,
+    setDefaultValueUsernameLogin: setDefaultValueUsernameLogin,
+    loading: loading,
+    setLoading: setLoading,
+    setTextLoading: setTextLoading,
 
     dataInput: dataInput,
     dataMssg: dataMssg,
@@ -161,25 +243,54 @@ export default function App() {
     dataIconButton: dataIconButton,
     dataMessage: dataMessage,
   }
-  
-  //DO NOT CHANGE THE ORDER
-  const debug = [
-/* 00 */  <LoadingScreen dataPages={dataPages} />,
-/* 01 */  <Login dataPages={dataPages} />,
-/* 02 */  <ForgotPassword dataPages={dataPages} />,
-/* 03 */  <Register dataPages={dataPages} />,
-/* 04 */  <EditNote dataPages={dataPages} />,
-  ]
-  
-  NavigationBar.setBackgroundColorAsync(theme[mode].backgroundColor);
 
+  const objdebug = {
+    loading : <LoadingScreen data={dataPages} />,
+    login:  <Login data={dataPages} />,
+    forgotPassword:  <ForgotPassword data={dataPages} />,
+    register:  <Register data={dataPages} />,
+    editNote:  <EditNote data={dataPages} />,
+    deviceAccounts: <DeviceAccounts data={dataPages} />,
+    userAccounts: <UserAccounts data={dataPages} />,
+  }
+  const arrdebug = Object.keys(objdebug);
+  
+  try {
+    NavigationBar.setBackgroundColorAsync(bgColorNavBar);
+  } catch (err) {
+    console.log(err)
+  }
 
   useEffect(() => {
+
     Animated.timing(opacityref, {
       toValue: 1,
       duration: 100,
       useNativeDriver: true,
     }).start();
+
+    const uniqueId = Application.getAndroidId() || Application.getIosIdForVendorAsync();
+
+    axios.get(`${SERVER_URL}/devices`,
+      { params: { code: uniqueId } }
+    ).then(async (res) => {
+      let isRegistered = false;
+
+      await res.data.forEach((objdevice) => {
+        if (objdevice.code === uniqueId && !isRegistered) {
+          isRegistered = true;
+          //console.log('id: ', objdevice._id);
+        }
+      })
+      
+      if (!isRegistered) {
+        axios.post(`${SERVER_URL}/devices`, {
+          code: uniqueId,
+        }).catch((error) => {
+          console.log(error);
+        })
+      }
+    })
   }, []);
 
   useEffect(() => {
@@ -188,6 +299,8 @@ export default function App() {
       duration: 1000,
       useNativeDriver: true,
     }).start();
+
+    setBgColorNavBar(theme[mode].backgroundColor);
   }, [mode]);
 
   const backgroundColorInterpolation = bgColor.interpolate({
@@ -196,88 +309,128 @@ export default function App() {
   });
 
   useEffect(() => {
-    if(appState === 'initializing'){
+    if(appState === 'initializing' && strpage === 'loading' && devMode[devMode.power].screenLoading){
       setTimeout(() => {
-        setPage(1);
+        setStrPage('login');
         setAppState('running');
-      }, devMode[devMode.power].timeToLoad);
+      }, devMode[devMode.power].timeLoading);
+    } else {
+      if (devMode.power === 'on')
+        setAppState('running');
     }
   }, [devMode]);
 
   useEffect(() => {
-    switch(page){
-      case 1:
+    switch(strpage){
+      case 'login':
         setIsHiddenMssg(true);
         setIsInputFocus(false);
+        setDefaultValueUsernameLogin('');
         break;
-      case 2:
+      case 'forgotPassword':
         setIsHiddenMssg(true);
         break;
-      case 3:
+      case 'register':
         setIsHiddenMssg(true);
         break;
     }
+    if(varpage === 'page' || varpage === 'selected'){
+      setStrPage(arrdebug[page]);
+      
+      if (varpage === 'page') 
+        setVarPage('selected');
+    }
   }, [page]);
+
+  useEffect(()=>{
+    if(varpage === 'strpage' || varpage === 'selected'){
+      setPage(arrdebug.findIndex((page)=>strpage === page))
+
+      if (varpage === 'strpage') 
+        setVarPage('selected');
+    }
+  }, [strpage])
 
   return (
       <Animated.View 
         key={'uniqueKey'}
         style={ styles.opacity } 
       >
-        { debug[page] }
+        { objdebug[strpage] }
         
-        {showDebugMenu &&
-          <View style={{ flexDirection: 'row', position: 'absolute', bottom: 20 }} >
-            <TouchableOpacity 
-              onPress={() => setPage(page > 0 ? page-1 : debug.length-1)}
-              style={{ ...styles.simpleButtons, justifyContent: 'center', alignItems: 'center', height: 30, paddingVertical: 2, paddingHorizontal: 6 }}
-            >
-              <Text> {"<"} </Text>
-            </TouchableOpacity>
-            
-            <ThemeModeButton dataIconButton={dataIconButton} />
+        {
+          loading && 
+          <View style={ styles.popUp.background } >
+            <View style={{
+              ...styles.popUp.container,
+              height: 250*consts.px,
+              backgroundColor: theme[mode].noIcons,
+            }} >
+              <Text style={{
+                ... styles.popUp.title,
+                color: theme[mode].color,
+                top: 10*consts.px,
+              }} >{textLoading}</Text>
+              <ActivityIndicator size='large' color={ theme[mode].color } />
+            </View>
+          </View>
+        }
 
-            <TouchableOpacity
-              onPress={() => setPage(page < debug.length-1 ? page+1 : 0)}
-              style={{ ...styles.simpleButtons, justifyContent: 'center', alignItems: 'center', height: 30, paddingVertical: 2, paddingHorizontal: 6 }}
-            >
-              <Text> {">"} </Text>
-            </TouchableOpacity>
-          </View>}
+        <DebugMenu
+          data={{
+            styles: styles,
+            setPage: setPage,
+            page: page,
+            arrdebug: arrdebug,
+            dataIconButton: dataIconButton,
+            showDebugMenu: showDebugMenu,
+            theme: theme,
+            mode: mode,
+            setLoading: setLoading,
+          }}
+        />
         
       </Animated.View>
   );
 }
 
-const theme = {
+export const theme = {
   dark: {
     backgroundColor: '#0E5758',
     noBackgroundColor: '#23DBDC',
     color: '#ffffff',
     noColor: '#000000',
-    statusBar: 'light',
     shadowTitle: '#000000',
     icons: "#eeeeee",
+    noIcons: "#292929",
     noMode: 'light',
     errorColor: '#B81414',
+    noErrorColor: '#A11212',
     successColor: '#30CC00',
     highSafety: '#30CC00',
     mediumSafety: '#C8AE04',
     lowSafety: '#FF0000',
+    contrastingYellow: '#E1B61E',
+    opacityPopUp: 0.33,
+    delete: '#E61919',
   },
   light: {
     backgroundColor: '#23DBDC',
     noBackgroundColor: '#0E5758',
     color: '#000000',
     noColor: '#ffffff',
-    statusBar: 'dark',
     shadowTitle: '#777777',
-    icons: "#444444",
+    icons: "#292929",
+    noIcons: "#eeeeee",
     noMode: 'dark',
     errorColor: '#A11212',
+    noErrorColor: '#B81414',
     successColor: '#124D00',
     highSafety: '#124D00',
     mediumSafety: '#7D6D02',
     lowSafety: '#760D0D',
+    contrastingYellow: '#5A490C',
+    opacityPopUp: 0.5,
+    delete: '#FF0000',
   },
 }

@@ -13,7 +13,7 @@ const SvgIcon = (props) => (
       {...props}
       >
       <Path
-        style={{ scale: props.px/15, ...props.stylepath }}
+        style={{ scale: props.px/16, ...props.stylepath }}
         fill={props.color}
         fillRule="evenodd"
         d={props.d}

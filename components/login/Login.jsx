@@ -6,15 +6,141 @@ import ButtonBack from "../buttonBack/ButtonBack";
 import ContrastingButton from "../contrastingButton/ContrastingButton";
 import Message from "../message/Message";
 import SvgIconProvider from "../svg/svgIconProvider";
+import bcrypt from 'react-native-bcrypt';
+import axios from 'axios';
+import * as Application from 'expo-application'
+import { SERVER_URL } from "../../config/config";
 
-const Login = ({ dataPages }) => {
+const Login = ({ data }) => {
   
-  const { theme, styles, mode, consts, dataInput, showDebugMenu, setShowDebugMenu, setPage, devMode, dataMssg, dataButtonBack, setIsInputFocus, dataMessage } = dataPages;
+  const { theme, styles, mode, consts, dataInput, showDebugMenu, setShowDebugMenu, setStrPage, devMode, dataMssg, dataButtonBack, setIsInputFocus, isInputFocus, dataMessage, defaultValueUsernameLogin, setLoading } = data;
   const { isHiddenMssg, setIsHiddenMssg, textMssg, setTestMssg, colorMssg, setColorMssg } = dataMssg;
   
   const [isHiddenIconQuestion, setIsHiddenIconQuestion] = useState(true);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const [textInput, setTextInput] = useState(['', '']);
+  const [textInput, setTextInput] = useState([defaultValueUsernameLogin, '']);
+  
+  const handleLogin = async () => {
+    
+    if (textInput[0] === '' || textInput[1] === '') {
+      setTestMssg('Please fill in all fields');
+      setColorMssg(theme[mode].errorColor);
+      setIsHiddenIconQuestion(false);
+      setIsHiddenMssg(false);
+      return;
+    }
+
+    setLoading(true);
+
+    //establecer un número de error, si es 100 no hay error. 
+    //Solo reemplaza valor de la variable si aumenta, no si disminuye
+
+    /**
+     *   1 - Usuario o contraseña incorrectos
+     *   2 - Error al iniciar sesión. Intente de nuevo
+     * 100 - No hay error
+     */
+
+    let idRes = 0;
+    await axios.get(`${SERVER_URL}/users`,
+      { params: { username: textInput[0] } }
+    ).then(async (res) => {
+      
+      setIsKeyboardVisible(false)
+      res.data.forEach(async (objuser) => {
+
+        if (objuser.username === textInput[0] && bcrypt.compareSync(textInput[1], objuser.password)) {
+
+          const id_user = objuser._id;
+          const id_device = Application.getAndroidId() || Application.getIosIdForVendorAsync();
+
+          await axios.get(`${SERVER_URL}/sessions`,
+            { params: { id_device: id_device, id_user: id_user } }
+          ).then(async (res) => {
+            let isFound = false;
+
+            await res.data.forEach(async (objsession) => {
+              if (objsession.id_device === id_device && objsession.id_user === id_user) {
+                isFound = true;
+                const id_session = objsession._id;
+                const session = {
+                  id_device: id_device,
+                  id_user: id_user,
+                  state: 'open',
+                }
+                await axios.put(`${SERVER_URL}/sessions/${id_session}`, session)
+                  .then((res) => {
+                    
+                    
+                    
+                    idRes = idRes < 100 ? 100 : idRes;
+                    setLoading(false);
+                    setTestMssg('Login successful');
+                    setColorMssg(theme[mode].successColor);
+                    setIsHiddenIconQuestion(true);
+                    setIsHiddenMssg(false);
+                    setTimeout(() => {
+                      setStrPage('editNote');
+                    }, 1000);
+                  })
+                  .catch((error) => {
+                    idRes = idRes < 2 ? 2 : idRes;
+                    console.log(error)
+                  })
+              }
+            })
+
+            if (!isFound) {
+              idRes = idRes < 1 ? 1 : idRes;
+            }
+          }).catch((error) => {
+            console.log(error)
+          })
+        } else {
+          idRes = idRes < 1 ? 1 : idRes;
+        }
+      })
+
+    }).then(() => {
+
+      let errorMssg = '';
+      let color = '';
+
+      switch (idRes) {
+        case 1:
+          errorMssg = 'User or password are wrong';
+          color = theme[mode].errorColor;
+          break;
+        case 2:
+          errorMssg = 'Error logging in. Try again';
+          color = theme[mode].errorColor;
+          break;
+        case 100:
+          errorMssg = 'Login successful';
+          color = theme[mode].successColor;
+          break;
+        default:
+          errorMssg = 'Error logging in. Try again';
+          color = theme[mode].errorColor;
+          break;
+      }
+      setLoading(false);
+      setTestMssg(errorMssg);
+      setColorMssg(color);
+      setIsHiddenIconQuestion(true);
+      setIsHiddenMssg(false);
+      
+    }).catch((error) => {
+      setLoading(false);
+      setTestMssg('Internet connection error');
+      setColorMssg(theme[mode].errorColor);
+      setIsHiddenIconQuestion(true);
+      setIsHiddenMssg(false);
+      console.log(error)
+    })         
+    
+    
+  }
 
   const compStyles = {
     header: {
@@ -53,6 +179,8 @@ const Login = ({ dataPages }) => {
         position: 'absolute',
         top: 0,
         left: 0,
+        width: '100%',
+        height: '100%',
       }} >
         <ButtonBack 
         dataButtonBack={{ 
@@ -67,19 +195,19 @@ const Login = ({ dataPages }) => {
           style={{ 
             position : 'absolute',
             flexGrow: 1, 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            width: 730*consts.px, 
-            top: 130*consts.px,
+            alignItems: 'center',
+            width: '100%',
+            height: '90%',
             showsVerticalScrollIndicator: false, 
             showsHorizontalScrollIndicator: false
           }}>
         
           <View 
             style={{ 
-              flex: 1, 
-              justifyContent: 'center', 
+              flex: 1,
               alignItems: 'center',
+              top: 130 * consts.px,
+              justifyContent: 'start',
           }} >
             
             <TouchableHighlight
@@ -94,6 +222,8 @@ const Login = ({ dataPages }) => {
             <View style={{
               marginTop: 150 * consts.px,
               alignItems: 'center',
+              width: '100%',
+              left: '2%',
             }} >
               <Input
                 placeholder="Username"
@@ -102,6 +232,7 @@ const Login = ({ dataPages }) => {
                 dCodeIcon="M7.5.875a3.625 3.625 0 0 0-1.006 7.109c-1.194.145-2.218.567-2.99 1.328-.982.967-1.479 2.408-1.479 4.288a.475.475 0 1 0 .95 0c0-1.72.453-2.88 1.196-3.612.744-.733 1.856-1.113 3.329-1.113s2.585.38 3.33 1.113c.742.733 1.195 1.892 1.195 3.612a.475.475 0 1 0 .95 0c0-1.88-.497-3.32-1.48-4.288-.77-.76-1.795-1.183-2.989-1.328A3.627 3.627 0 0 0 7.5.875ZM4.825 4.5a2.675 2.675 0 1 1 5.35 0 2.675 2.675 0 0 1-5.35 0Z"
                 dataInput={{
                   ...dataInput,
+                  defaultValue: defaultValueUsernameLogin,
                   stateValue: [textInput, setTextInput],
                   isKeyboardVisible: isKeyboardVisible,
                   index: 0,
@@ -129,6 +260,7 @@ const Login = ({ dataPages }) => {
                 dCodeIcon="M5 4.636c0-.876.242-1.53.643-1.962.396-.427 1.003-.696 1.858-.696.856 0 1.462.269 1.857.694.4.431.642 1.085.642 1.961V6H5V4.636ZM4 6V4.636c0-1.055.293-1.978.91-2.643.623-.67 1.517-1.015 2.591-1.015 1.075 0 1.969.344 2.59 1.014.617.664.909 1.587.909 2.641V6h1a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1ZM3 7h9v6H3V7Z"
                 dataInput={{
                   ...dataInput,
+                  defaultValue: '',
                   stateValue: [textInput, setTextInput],
                   index: 1,
                   isLoginInput: true,
@@ -155,32 +287,7 @@ const Login = ({ dataPages }) => {
               mode={mode} 
               consts={consts} 
               styles={{ marginTop: 50 * consts.px, marginBottom: 260 * consts.px }} 
-              onPress={() => {
-                
-                if (textInput[0] === '' || textInput[1] === '') {
-                  setTestMssg('Please fill in all fields');
-                  setColorMssg(theme[mode].errorColor);
-                  setIsHiddenIconQuestion(false);
-                  setIsHiddenMssg(false);
-                  return;
-                }
-                
-                if (textInput[0] === 'UserURU' && textInput[1] === 'Password123$') {
-                  setTestMssg('Login successful');
-                  setColorMssg(theme[mode].successColor);
-                  setIsHiddenIconQuestion(true);
-                  setIsHiddenMssg(false);
-                  setTimeout(() => {
-                    setPage(4);
-                  }, 1000);
-
-                } else {
-                  setTestMssg('User or password are wrong');
-                  setColorMssg(theme[mode].errorColor);
-                  setIsHiddenIconQuestion(false);
-                  setIsHiddenMssg(false);
-                }
-              }}
+              onPress={handleLogin}
               />
             {
               isHiddenIconQuestion ? 
@@ -188,8 +295,8 @@ const Login = ({ dataPages }) => {
               <TouchableHighlight
                 style={{
                   position: 'absolute',
-                  top: 674*consts.px,
-                  left: -59*consts.px,
+                  top: 645 * consts.px,
+                  left: -74 * consts.px,
                   width: 50*consts.px,
                   height: 50*consts.px,
                   flex: 1,
@@ -198,7 +305,7 @@ const Login = ({ dataPages }) => {
                 }}
                 onPress={() => {
                   if (isHiddenIconQuestion === false){
-                    setPage(2);
+                    setStrPage('forgotPassword');
                   }
                 }}
                 underlayColor={'transparent'}
@@ -226,34 +333,38 @@ const Login = ({ dataPages }) => {
               </TouchableHighlight>
             }
              
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                position: 'absolute',
-                bottom: -80 * consts.px,
-              }} >
-              <Text
+            {
+              !isInputFocus ? 
+              <View
                 style={{
-                  color: theme[mode].color,
-                  ...compStyles.footText,
-                }}>
-                Don't have an account? </Text>
-              <TouchableOpacity
-                onPress={() => setPage(3)}
-              >
+                  display: 'flex',
+                  flexDirection: 'row',
+                  position: 'absolute',
+                  bottom: 50 * consts.px,
+                }} >
                 <Text
                   style={{
-                    color: theme[mode].noColor,
+                    color: theme[mode].color,
                     ...compStyles.footText,
-                    textShadowColor: theme[mode].color,
-                    textShadowOffset: { width: 2, height: 2 },
-                    textShadowRadius: 6,
                   }}>
-                  Sign up.
-                </Text>
-              </TouchableOpacity>
-            </View>
+                  Don't have an account? </Text>
+                <TouchableOpacity
+                  onPress={() => { setStrPage('register'); setIsHiddenMssg(true); }}
+                >
+                  <Text
+                    style={{
+                      color: theme[mode].noColor,
+                      ...compStyles.footText,
+                      textShadowColor: theme[mode].color,
+                      textShadowOffset: { width: 2, height: 2 },
+                      textShadowRadius: 6,
+                    }}>
+                    Sign up.
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              : null
+            }
             <Message 
               dataMessage={{
                 ...dataMessage,
